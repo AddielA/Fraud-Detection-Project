@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
 import warnings
@@ -75,3 +75,73 @@ print(f"- Fraud: {y_test.sum():,} ({y_test.mean()*100:.3f}%)")
 
 # Verify it worked
 print(f"\n Stratification check: Train fraud rate = {y_train.mean():.4f}, Test fraud rate = {y_test.mean():.4f}")
+
+# Standardize data with scaled featuress
+scaler = StandardScaler()
+
+# Fit on training data
+x_train_scaled = scaler.fit_transform(x_train)
+x_test_scaled = scaler.fit_transform(x_test)
+
+# Convert back to Dataframes for easier handling
+x_train_scaled = pd.DataFrame(x_train_scaled, columns=feature_cols, index=x_train.index)
+x_test_scaled = pd.DataFrame(x_test_scaled, columns=feature_cols, index=x_test.index)
+
+print(" Features scaled using StandardScaler")
+print(f"Mean of scaled training features: {x_train_scaled.mean().mean():.6f} (should be ~0)")
+print(f"Std of scaled training features: {x_train_scaled.std().mean():.6f} (should be ~1)")
+
+# Visualize the effect of scaling 
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+
+# Before scaling
+ax1.boxplot([x_train['Amount'].values, x_train['V1'].values, x_train['V2'].values],
+            labels=['Amount', 'V1', 'V2'])
+ax1.set_title('Before Scaling')
+ax1.set_ylabel('Value')
+
+# After scaling
+ax2.boxplot([x_train_scaled['Amount'].values, x_train_scaled['V1'].values, x_train_scaled['V2'].values], 
+            labels=['Amount', 'V1', 'V2'])
+ax2.set_title('After Scaling')
+ax2.set_ylabel('Standardized Value')
+
+plt.tight_layout()
+plt.show()
+
+# Simple Models
+
+models = {}
+results = {}
+
+print(" Training Baseline Models...")
+print("=" * 50)
+
+# 1. Logistic Regression
+print("\n Logistic Regression")
+lr = LogisticRegression(
+    random_state=42,
+    max_iter=1000,
+    class_weight='balanced' # Auto adjust weights
+)
+lr.fit(x_train_scaled, y_train)
+models['Logistic Regression'] = lr
+
+# Make predictions
+y_pred_lr = lr.predict(x_test_scaled)
+y_proba_lr = lr.predict_proba(x_test_scaled)[:, 1]
+
+# Calculate metrics
+lr_metrics = {
+    'precision': precision_score(y_test, y_pred_lr),
+    'recall': recall_score(y_test, y_pred_lr),
+    'f1': f1_score(y_test, y_pred_lr),
+    'roc_auc': roc_auc_score(y_test, y_proba_lr)
+}
+
+results['Logistic Regression'] = lr_metrics
+
+print(f" Precision: {lr_metrics['precision']:.4f}")
+print(f" Recall: {lr_metrics['recall']:.4f}")
+print(f" F1-Score: {lr_metrics['f1']:.4f}")
+print(f" ROC-AUC: {lr_metrics['roc_auc']:.4f}")
