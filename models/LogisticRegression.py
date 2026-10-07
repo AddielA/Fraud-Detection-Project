@@ -1,0 +1,43 @@
+import joblib
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, confusion_matrix
+
+from data_loader import load_data
+from preprocess import engineer_features, split_and_scale
+from evaluate import evaluate_model
+
+
+def main():
+    # 1. Load and prepare data
+    df = engineer_features(load_data())
+    X_train, X_test, y_train, y_test, scaler = split_and_scale(df)
+
+    # 2. Train
+    print(" Training Logistic Regression...")
+    lr = LogisticRegression(
+        random_state=42,
+        max_iter=1000,
+        class_weight='balanced'  # auto-adjusts for the rare fraud class
+    )
+    lr.fit(X_train, y_train)
+
+    # 3. Evaluate
+    metrics = evaluate_model(lr, X_test, y_test)
+    print("\n Results:")
+    for name, value in metrics.items():
+        print(f" {name}: {value:.4f}")
+
+    y_pred = lr.predict(X_test)
+    print("\n Confusion Matrix:")
+    print(confusion_matrix(y_test, y_pred))
+    print("\n Classification Report:")
+    print(classification_report(y_test, y_pred))
+
+    # 4. Save
+    joblib.dump(lr, 'models/logistic_regression.pkl')
+    joblib.dump(scaler, 'models/scaler.pkl')
+    print("\n Model and scaler saved to models/")
+
+
+if __name__ == '__main__':
+    main()
