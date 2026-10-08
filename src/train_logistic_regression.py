@@ -5,6 +5,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 from data_loader import load_data
 from preprocess import engineer_features, split_and_scale
 from evaluate import evaluate_model
+import warnings
+warnings.filterwarnings('ignore')
 
 
 def main():
@@ -17,7 +19,7 @@ def main():
     lr = LogisticRegression(
         random_state=42,
         max_iter=1000,
-        class_weight='balanced'  # auto-adjusts for the rare fraud class
+        class_weight='balanced' 
     )
     lr.fit(X_train, y_train)
 
@@ -28,15 +30,17 @@ def main():
         print(f" {name}: {value:.4f}")
 
     y_pred = lr.predict(X_test)
-    print("\n Confusion Matrix:")
-    print(confusion_matrix(y_test, y_pred))
+    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+    print(f"\n Frauds caught: {tp}")
+    print(f" Frauds missed: {fn}")
+    print(f" False alarms: {fp}")
+    print(f" Normal transactions correctly passed: {tn}")
     print("\n Classification Report:")
     print(classification_report(y_test, y_pred))
 
     # 4. Save
     joblib.dump(lr, 'models/logistic_regression.pkl')
     joblib.dump(scaler, 'models/scaler.pkl')
-    print("\n Model and scaler saved to models/")
 
 
 if __name__ == '__main__':
