@@ -68,6 +68,7 @@ def main():
         X_train, X_test, y_test
     )
     
+    # Method 2: Fit on normal transactions only
     X_train_normal = X_train[y_train == 0]
     model_normal, metrics_normal = train_and_score(
         "Method 2: Fit on normal transactions only",
