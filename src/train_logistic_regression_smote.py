@@ -14,15 +14,15 @@ def main():
     # 1. Load and prepare data
     df = engineer_features(load_data())
     X_train, X_test, y_train, y_test, scaler = split_and_scale(df)
+        
+    # 2. Train
+    print(" Training Logistic Regression...")
     
     smote = SMOTE(random_state=42)
     X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
     print(f" Training set after SMOTE: {len(X_train_res):,} samples "
           f"({y_train_res.sum():,} fraud, {(y_train_res == 0).sum():,} normal)")
-        
-
-    # 2. Train
-    print(" Training Logistic Regression...")
+    
     lr = LogisticRegression(
         random_state=42,
         max_iter=1000,
