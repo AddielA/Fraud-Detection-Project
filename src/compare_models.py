@@ -11,14 +11,23 @@ warnings.filterwarnings('ignore')
 
 Model_Files = {
     'Logistic Regression' : 'models/logistic_regression.pkl',
+    'Logistic Regression + SMOTE': 'models/logistic_regression_smote.pkl',
     'Random Forest' : 'models/random_forest.pkl',
-    'Neural Network' : 'models/neural_network.pkl'
+    'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
+    'Neural Network' : 'models/neural_network.pkl',
+    'Neural Network + SMOTE': 'models/neural_network_smote.pkl',
+    'Isolation Fores ALL': 'models/isolation_forest.pkl',
+    'Isolation Fores NORMAL': 'models/isolation_forest_normal.pkl'
 }
 
 Config_Notes = {
     'Logistic Regression' : "class_weight='balanced' (missed fraud is penalized more)",
+    'Logistic Regression + SMOTE': "SMOTE on training data + class_weight='balanced'",
     'Random Forest' : "class_weight='balanced' (same idea as logistic regression, missed fraud is more penalized)",
-    'Neural Network' : "no class weighing (MLPClassifier has no class_weight option)"
+    'Random Forest + SMOTE': "SMOTE on training data + class_weight='balanced'",
+    'Neural Network' : "no class weighing (MLPClassifier has no class_weight option)",
+    'Isolation Forest (all data)': "unsupervised, fit on all training data, contamination=0.002",
+    'Isolation Forest (normal only)': "fit on normal transactions only, contamination=0.002",
 }
 
 # Metrics used for ranking. ROC-AUC is shown but not ranked, because with ~0.17% fraud
