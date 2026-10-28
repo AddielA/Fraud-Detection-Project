@@ -1,23 +1,27 @@
 import os
 import joblib
 import pandas as pd
+import numpy as np
 from sklearn.metrics import confusion_matrix
 
 from data_loader import load_data
 from preprocess import engineer_features, split_and_scale
-from evaluate import evaluate_model
+from evaluate import evaluate_model, evaluate_anomaly_model
 import warnings
 warnings.filterwarnings('ignore')
 
 Model_Files = {
     'Logistic Regression' : 'models/logistic_regression.pkl',
-    'Logistic Regression + SMOTE': 'models/logistic_regression_smote.pkl',
     'Random Forest' : 'models/random_forest.pkl',
-    'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
     'Neural Network' : 'models/neural_network.pkl',
+    'Isolation Forest ALL': 'models/isolation_forest_all.pkl',
+    'Isolation Forest NORMAL': 'models/isolation_forest_normal.pkl'
+}
+
+Anomaly_Models = {
+    'Logistic Regression + SMOTE': 'models/logistic_regression_smote.pkl',
+    'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
     'Neural Network + SMOTE': 'models/neural_network_smote.pkl',
-    'Isolation Fores ALL': 'models/isolation_forest.pkl',
-    'Isolation Fores NORMAL': 'models/isolation_forest_normal.pkl'
 }
 
 Config_Notes = {
@@ -26,6 +30,7 @@ Config_Notes = {
     'Random Forest' : "class_weight='balanced' (same idea as logistic regression, missed fraud is more penalized)",
     'Random Forest + SMOTE': "SMOTE on training data + class_weight='balanced'",
     'Neural Network' : "no class weighing (MLPClassifier has no class_weight option)",
+    'Neural Network + SMOTE': "SMOTE on training data, no class weighting",
     'Isolation Forest (all data)': "unsupervised, fit on all training data, contamination=0.002",
     'Isolation Forest (normal only)': "fit on normal transactions only, contamination=0.002",
 }
@@ -57,10 +62,14 @@ def load_models():
 def collect_results(models, X_test, y_test):
     results = {}
     for name, model in models.items():
-        metrics = evaluate_model(model, X_test, y_test)
-        y_pred  = model.predict(X_test)
+        if name in Anomaly_Models:
+            metrics = evaluate_anomaly_model(model, X_test, y_test)
+            y_pred = np.where(model.predict(X_test) == -1, 1, 0)
+        else:
+            metrics = evaluate_model(model, X_test, y_test)
+            y_pred = model.predict(X_test)
         tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-        results[name] = {**metrics, 'tn' : tn, 'fp': fp, 'fn': fn, 'tp': tp} 
+        results[name] = {**metrics, 'tn': tn, 'fp': fp, 'fn': fn, 'tp': tp}
     return results
 
 def print_scoreboard(results):
