@@ -153,18 +153,27 @@ def print_what_worked(results, df):
     else:
         print(f" {best_p} led on both precision and recall, which is unusual and a strong result.")
 
-    if 'Neural Network' in results and len(results) > 1:
-        others = [n for n in results if n != 'Neural Network']
+        weighted = [n for n in ('Logistic Regression', 'Random Forest') if n in results]
+        
+    if 'Neural Network' in results and weighted:
         nn_recall = results['Neural Network']['recall']
-        other_recall = sum(results[n]['recall'] for n in others) / len(others)
-        print(f"\n The Neural Network's recall was {nn_recall:.3f}, versus an average of "
-            f"{other_recall:.3f} for the class-weighted models.")
-        if nn_recall < other_recall:
-            print(" This is consistent with the NN having no class weighting, so it is not told "
-                "that missing fraud is costly. (Consistent with, not proof of: other differences also matter.)")
+        avg_weighted = sum(results[n]['recall'] for n in weighted) / len(weighted)
+        print(f"\n The plain Neural Network's recall was {nn_recall:.3f}, versus an average of "
+              f"{avg_weighted:.3f} for the class-weighted models.")
+        if nn_recall < avg_weighted:
+            print(" This is consistent with the NN having no class weighting. "
+                  "(Consistent with, not proof of: other differences also matter.)")
         else:
-            print(" The NN matched or beat the weighted models even without class weighting.")
+            print(" The NN matched or beat the class-weighted models even without class weighting.")
 
+    for base in ('Logistic Regression', 'Random Forest', 'Neural Network'):
+        smote_name = f"{base} + SMOTE"
+        if base in results and smote_name in results:
+            b, s = results[base], results[smote_name]
+            print(f"\n {base}: adding SMOTE changed recall by {s['recall'] - b['recall']:+.3f}, "
+                  f"precision by {s['precision'] - b['precision']:+.3f}, "
+                  f"PR-AUC by {s['pr_auc'] - b['pr_auc']:+.4f}.")
+            
     print("\n Worth noting: all models use the default 0.5 decision threshold. "
         "Part of what separates them may be threshold placement, not model quality.")
 
