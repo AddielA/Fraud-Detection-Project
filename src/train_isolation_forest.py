@@ -35,8 +35,8 @@ def train_and_score(label, X_fit, X_test, y_test):
         'precision': precision_score(y_test, y_pred),
         'recall':    recall_score(y_test, y_pred),
         'f1':        f1_score(y_test, y_pred),
-        'roc_auc':   roc_auc_score(y_test, y_pred),
-        'pr_auc':    average_precision_score(y_test, y_pred)
+        'roc_auc':   roc_auc_score(y_test, y_scores),
+        'pr_auc':    average_precision_score(y_test, y_scores)
     }
     
     print("\n Results:")

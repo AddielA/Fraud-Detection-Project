@@ -12,17 +12,17 @@ warnings.filterwarnings('ignore')
 
 Model_Files = {
     'Logistic Regression' : 'models/logistic_regression.pkl',
+    'Logistic Regression + SMOTE': 'models/logistic_regression_smote.pkl',
     'Random Forest' : 'models/random_forest.pkl',
+    'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
     'Neural Network' : 'models/neural_network.pkl',
+    'Neural Network + SMOTE': 'models/neural_network_smote.pkl',
     'Isolation Forest ALL': 'models/isolation_forest_all.pkl',
     'Isolation Forest NORMAL': 'models/isolation_forest_normal.pkl'
 }
 
-Anomaly_Models = {
-    'Logistic Regression + SMOTE': 'models/logistic_regression_smote.pkl',
-    'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
-    'Neural Network + SMOTE': 'models/neural_network_smote.pkl',
-}
+# Models with no predict_proba: evaluated with evaluate_anomaly_model instead.
+Anomaly_Models = {'Isolation Forest ALL', 'Isolation Forest NORMAL'}
 
 Config_Notes = {
     'Logistic Regression' : "class_weight='balanced' (missed fraud is penalized more)",
@@ -31,8 +31,8 @@ Config_Notes = {
     'Random Forest + SMOTE': "SMOTE on training data + class_weight='balanced'",
     'Neural Network' : "no class weighing (MLPClassifier has no class_weight option)",
     'Neural Network + SMOTE': "SMOTE on training data, no class weighting",
-    'Isolation Forest (all data)': "unsupervised, fit on all training data, contamination=0.002",
-    'Isolation Forest (normal only)': "fit on normal transactions only, contamination=0.002",
+    'Isolation Forest ALL': "unsupervised, fit on all training data, contamination=0.002",
+    'Isolation Forest NORMAL': "fit on normal transactions only, contamination=0.002",
 }
 
 # Metrics used for ranking. ROC-AUC is shown but not ranked, because with ~0.17% fraud
@@ -153,8 +153,8 @@ def print_what_worked(results, df):
     else:
         print(f" {best_p} led on both precision and recall, which is unusual and a strong result.")
 
-        weighted = [n for n in ('Logistic Regression', 'Random Forest') if n in results]
-        
+    weighted = [n for n in ('Logistic Regression', 'Random Forest') if n in results]
+
     if 'Neural Network' in results and weighted:
         nn_recall = results['Neural Network']['recall']
         avg_weighted = sum(results[n]['recall'] for n in weighted) / len(weighted)
