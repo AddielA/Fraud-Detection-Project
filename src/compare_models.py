@@ -17,11 +17,13 @@ Model_Files = {
     'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
     'Neural Network' : 'models/neural_network.pkl',
     'Neural Network + SMOTE': 'models/neural_network_smote.pkl',
+    'XGBoost': 'models/xgboost.pkl',
+    'LightGBM': 'models/lightgbm.pkl',
     'Isolation Forest ALL': 'models/isolation_forest_all.pkl',
     'Isolation Forest NORMAL': 'models/isolation_forest_normal.pkl'
 }
 
-# Models with no predict_proba: evaluated with evaluate_anomaly_model instead.
+# Anomaly models have no predict_proba, so they are scored with evaluate_anomaly_model.
 Anomaly_Models = {'Isolation Forest ALL', 'Isolation Forest NORMAL'}
 
 Config_Notes = {
@@ -31,12 +33,15 @@ Config_Notes = {
     'Random Forest + SMOTE': "SMOTE on training data + class_weight='balanced'",
     'Neural Network' : "no class weighing (MLPClassifier has no class_weight option)",
     'Neural Network + SMOTE': "SMOTE on training data, no class weighting",
+    'XGBoost': "scale_pos_weight = normal/fraud ratio, early stopping on a validation set",
+    'LightGBM': "scale_pos_weight = normal/fraud ratio, early stopping on a validation set, "
+                "reg_lambda=10 and min_child_samples=100 for stability",
     'Isolation Forest ALL': "unsupervised, fit on all training data, contamination=0.002",
     'Isolation Forest NORMAL': "fit on normal transactions only, contamination=0.002",
 }
 
-# Metrics used for ranking. ROC-AUC is shown but not ranked, because with ~0.17% fraud
-# it looks great for any model used; PR-AUC is a better measurement for ranking.
+# Metrics used for ranking. ROC-AUC is shown but not ranked: with only ~0.17% fraud
+# it is high for every model, so PR-AUC separates them better.
 Rank_Metrics = ['precision', 'recall', 'f1', 'pr_auc']
 Metric_Meaning = {
     'precision' : "avoiding false alarms",
@@ -104,7 +109,7 @@ def explain_model(name, r):
         print(f" In practical terms, it raised about {r['fp'] / r['tp']:.1f} false alarms "
             f"for every real fraud it caught.")
 
-    # Rule-of-thumb interpretation (my thresholds, adjust them if you disagree)
+    # Label the model's overall behavior using rule-of-thumb cutoffs.
     if r['recall'] >= 0.85 and r['precision'] < 0.30:
         print(" Overall: AGGRESSIVE. It catches most fraud but inflates data with false alarms.")
     elif r['precision'] >= 0.80 and r['recall'] < 0.70:
@@ -153,7 +158,8 @@ def print_what_worked(results, df):
     else:
         print(f" {best_p} led on both precision and recall, which is unusual and a strong result.")
 
-    weighted = [n for n in ('Logistic Regression', 'Random Forest') if n in results]
+    weighted = [n for n in ('Logistic Regression', 'Random Forest', 'XGBoost', 'LightGBM')
+                if n in results]
 
     if 'Neural Network' in results and weighted:
         nn_recall = results['Neural Network']['recall']

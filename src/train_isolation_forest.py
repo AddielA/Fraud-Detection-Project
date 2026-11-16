@@ -62,7 +62,7 @@ def main():
     df = engineer_features(load_data())
     X_train, X_test, y_train, y_test, _ = split_and_scale(df)
     
-    # Method 1: Fit all trinaing data
+    # Method 1: Fit on all training data
     model_all, metrics_all = train_and_score(
         "Method 1: Fit all training data",
         X_train, X_test, y_test

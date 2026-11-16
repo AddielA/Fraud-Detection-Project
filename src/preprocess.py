@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.utils.class_weight import compute_class_weight
 
 def engineer_features(df):
     df = df.copy()
@@ -26,3 +27,25 @@ def split_and_scale(df, test_size=0.2, random_state=42):
                                  columns=feature_cols, index=X_test.index)
 
     return X_train_scaled, X_test_scaled, y_train, y_test, scaler
+
+def split_train_val(X_train, y_train, val_size=0.2, random_state=42):
+    """Split the training data into a fit set and a validation set.
+
+    The validation set is used for early stopping. The test set is not touched.
+    """
+    X_train_fit, X_val, y_train_fit, y_val = train_test_split(
+        X_train, y_train, test_size=val_size, random_state=random_state, stratify=y_train
+    )
+    return X_train_fit, X_val, y_train_fit, y_val
+
+def get_class_weights(y):
+    """Compute balanced class weights for the labels y.
+
+    Returns two values:
+      - class_weight_dict: {0: w0, 1: w1}, for class_weight= in scikit-learn
+      - ratio: normal count / fraud count, for scale_pos_weight= in XGBoost and LightGBM
+    """
+    classes = np.unique(y)
+    weights = compute_class_weight('balanced', classes=classes, y=y)
+    class_weight_dict = {int(c): float(w) for c, w in zip(classes, weights)}
+    return class_weight_dict, class_weight_dict[1] / class_weight_dict[0]
