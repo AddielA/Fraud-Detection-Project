@@ -23,7 +23,7 @@ def main():
     print(f" Validation: {len(X_val):,} samples ({y_val.sum()} fraud)")
     print(f" Test:       {len(X_test):,} samples ({y_test.sum()} fraud)")
     
-    weights = compute_class_weight('balanced', classes=np.unique(y_train), y=y_train)
+    weights = compute_class_weight('balanced', classes=np.unique(y_train_fit), y=y_train_fit)
     class_weight_dict = {0: weights[0], 1: weights[1]}
     
     print("\n Class Weights (for balanced learning):")
