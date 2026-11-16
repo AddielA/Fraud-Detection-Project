@@ -16,7 +16,7 @@ def train_and_score(label, X_fit, X_test, y_test):
     print(f" Training on {len(X_fit):,} transactions")
 
 
-    print("\n Random Forest")
+    print("\n Isolation Forest")
     model = IsolationForest(
         contamination=0.002, 
         random_state=42,
