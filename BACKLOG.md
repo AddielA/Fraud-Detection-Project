@@ -6,7 +6,7 @@ Completed tickets are marked ✅ and keep a short note of what was done.
 | ID | Ticket | Priority | Effort | Depends on |
 |---|---|---|---|---|
 | FD-1 | ✅ ~~Pin package versions~~ | Required | 15 min | |
-| FD-2 | Make scripts runnable from any folder | Required | 30 min | |
+| FD-2 | ✅ ~~Make scripts runnable from any folder~~ | Required | 30 min | |
 | FD-3 | Write the README | Required | 1–2 hrs | FD-1, FD-2 |
 | FD-4 | Move repeated results printout into `evaluate.py` | Optional | 30 min | |
 | FD-5 | Tune decision thresholds on the validation set | Optional | 1–2 hrs | |
@@ -31,17 +31,9 @@ These make the repo usable by someone other than you. Finish them before sharing
 
 Every package in `requirements.txt` is pinned to the version installed in the project venv, and `joblib` was added. The pins require Python 3.9 (numpy 2.0.2 doesn't support newer versions); note this in the README.
 
-### FD-2: Make scripts runnable from any folder
+### FD-2: Make scripts runnable from any folder ✅ Complete (2026-11-17)
 
-The scripts use relative paths (`models/...`, `data/processed/...`), and `data_loader.py` assumes the folder is named `fraud_anomaly_detection`. Running from inside `src/` or renaming the folder breaks them.
-
-Steps:
-1. In `data_loader.py`, build the project root from the file's own location: `ROOT = Path(__file__).resolve().parent.parent`.
-2. Default the data path to `ROOT / 'data' / 'raw' / 'creditcard.csv'`.
-3. Replace every `'models/...'` and `'data/processed/...'` path in `src/` with `ROOT / ...` (import `ROOT` from `data_loader.py`).
-4. Check by running one script from the project root and one from inside `src/`.
-
-Done when: every script works no matter which folder it is run from.
+`data_loader.py` defines `Root` (the project folder, found from the file's own location), and every data and model path in `src/` is built from it. The scripts work from the project root or from inside `src/`, and renaming the project folder no longer breaks them.
 
 ### FD-3: Write the README
 
