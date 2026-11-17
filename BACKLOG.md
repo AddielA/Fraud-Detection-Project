@@ -7,7 +7,7 @@ Completed tickets are marked ✅ and keep a short note of what was done.
 |---|---|---|---|---|
 | FD-1 | ✅ ~~Pin package versions~~ | Required | 15 min | |
 | FD-2 | ✅ ~~Make scripts runnable from any folder~~ | Required | 30 min | |
-| FD-3 | Write the README | Required | 1–2 hrs | FD-1, FD-2 |
+| FD-3 | ✅ ~~Write the README~~ | Required | 1–2 hrs | FD-1, FD-2 |
 | FD-4 | Move repeated results printout into `evaluate.py` | Optional | 30 min | |
 | FD-5 | Tune decision thresholds on the validation set | Optional | 1–2 hrs | |
 | FD-6 | Business-cost analysis | Optional | 2–3 hrs | FD-5 |
@@ -35,18 +35,9 @@ Every package in `requirements.txt` is pinned to the version installed in the pr
 
 `data_loader.py` defines `Root` (the project folder, found from the file's own location), and every data and model path in `src/` is built from it. The scripts work from the project root or from inside `src/`, and renaming the project folder no longer breaks them.
 
-### FD-3: Write the README
+### FD-3: Write the README ✅ Complete (2026-11-17)
 
-Sections to include:
-1. **Overview:** what the project does, in two or three sentences.
-2. **Dataset:** link to the Kaggle credit card fraud dataset, and where to put `creditcard.csv` (it is gitignored, so it is not in the repo).
-3. **Setup:** create a venv, `pip install -r requirements.txt`, and on macOS `brew install libomp` for XGBoost and LightGBM.
-4. **Usage:** the order to run things (training scripts, then `compare_models.py`).
-5. **Results:** the scoreboard table from `compare_models.py`.
-6. **Key decisions:** why PR-AUC instead of accuracy, why class weighting and SMOTE, why early stopping uses a validation set and not the test set.
-7. **Project structure:** one line per file in `src/`.
-
-Done when: someone who has never seen the project can clone it and reproduce the results table.
+`README.md` covers the overview, results table and findings, dataset, setup, usage, approach, limitations and project structure. The setup steps were tested in a fresh clone; they include creating `data/raw/` and `models/`, which git does not track.
 
 ---
 
