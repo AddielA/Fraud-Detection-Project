@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from imblearn.over_sampling import SMOTE
 
-from data_loader import load_data
+from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
 from evaluate import evaluate_model
 
@@ -55,7 +55,7 @@ def main():
     print(classification_report(y_test, y_pred_rf))
     
     
-    joblib.dump(rf, 'models/random_forest_smote.pkl')
+    joblib.dump(rf, Root / 'models' / 'random_forest_smote.pkl')
 
 if __name__ == '__main__':
     main()

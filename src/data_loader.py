@@ -1,6 +1,10 @@
 import pandas as pd
+from pathlib import Path
 
-def load_data(file_path='../fraud_anomaly_detection/data/raw/creditcard.csv'):
+Root = Path(__file__).resolve().parent.parent
+
+
+def load_data(file_path= Root / 'data' / 'raw' / 'creditcard.csv'):
     df = pd.read_csv(file_path)
 
     print(" Dataset Overview ")

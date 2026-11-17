@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
-from data_loader import load_data
+from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
 from evaluate import evaluate_model
 import warnings
@@ -42,8 +42,8 @@ def main():
     print(classification_report(y_test, y_pred))
 
     # 4. Save
-    joblib.dump(nn, 'models/neural_network.pkl')
-    joblib.dump(scaler, 'models/scaler.pkl')
+    joblib.dump(nn, Root / 'models' / 'neural_network.pkl')
+    joblib.dump(scaler, Root / 'models' / 'scaler.pkl')
 
 
 if __name__ == '__main__':

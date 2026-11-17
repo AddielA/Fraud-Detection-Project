@@ -2,7 +2,7 @@ import joblib
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
 
-from data_loader import load_data
+from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
 from evaluate import evaluate_model
 import warnings
@@ -39,8 +39,8 @@ def main():
     print(classification_report(y_test, y_pred))
 
     # 4. Save
-    joblib.dump(lr, 'models/logistic_regression.pkl')
-    joblib.dump(scaler, 'models/scaler.pkl')
+    joblib.dump(lr, Root / 'models' / 'logistic_regression.pkl')
+    joblib.dump(scaler, Root / 'models' / 'scaler.pkl')
 
 
 if __name__ == '__main__':

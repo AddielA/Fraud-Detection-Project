@@ -3,7 +3,7 @@ import pandas as pd
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 
-from data_loader import load_data
+from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale, split_train_val, get_class_weights
 from evaluate import evaluate_model
 
@@ -64,7 +64,7 @@ def main():
     print(classification_report(y_test, y_pred))
 
     # 4. Save
-    joblib.dump(xgb, 'models/xgboost.pkl')
+    joblib.dump(xgb, Root / 'models' / 'xgboost.pkl')
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, average_precision_score
 
-from data_loader import load_data
+from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
 
 def train_and_score(label, X_fit, X_test, y_test):
@@ -90,8 +90,8 @@ def main():
     print(" Fraud is only ~0.17% of the data, so removing it from training changes "
           "very little. Small differences may just be noise from one train/test split.")
 
-    joblib.dump(model_all, 'models/isolation_forest_all.pkl')
-    joblib.dump(model_normal, 'models/isolation_forest_normal.pkl')
+    joblib.dump(model_all, Root / 'models' / 'isolation_forest_all.pkl')
+    joblib.dump(model_normal, Root / 'models' / 'isolation_forest_normal.pkl')
     
 if __name__ == '__main__':
     main()

@@ -4,23 +4,23 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-from data_loader import load_data
+from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
 from evaluate import evaluate_model, evaluate_anomaly_model
 import warnings
 warnings.filterwarnings('ignore')
 
 Model_Files = {
-    'Logistic Regression' : 'models/logistic_regression.pkl',
-    'Logistic Regression + SMOTE': 'models/logistic_regression_smote.pkl',
-    'Random Forest' : 'models/random_forest.pkl',
-    'Random Forest + SMOTE': 'models/random_forest_smote.pkl',
-    'Neural Network' : 'models/neural_network.pkl',
-    'Neural Network + SMOTE': 'models/neural_network_smote.pkl',
-    'XGBoost': 'models/xgboost.pkl',
-    'LightGBM': 'models/lightgbm.pkl',
-    'Isolation Forest ALL': 'models/isolation_forest_all.pkl',
-    'Isolation Forest NORMAL': 'models/isolation_forest_normal.pkl'
+    'Logistic Regression' : Root / 'models' / 'logistic_regression.pkl',
+    'Logistic Regression + SMOTE': Root / 'models' / 'logistic_regression_smote.pkl',
+    'Random Forest' : Root / 'models' / 'random_forest.pkl',
+    'Random Forest + SMOTE': Root / 'models' / 'random_forest_smote.pkl',
+    'Neural Network' : Root / 'models' / 'neural_network.pkl',
+    'Neural Network + SMOTE': Root / 'models' / 'neural_network_smote.pkl',
+    'XGBoost': Root / 'models' / 'xgboost.pkl',
+    'LightGBM': Root / 'models' / 'lightgbm.pkl',
+    'Isolation Forest ALL': Root / 'models' / 'isolation_forest_all.pkl',
+    'Isolation Forest NORMAL': Root / 'models' / 'isolation_forest_normal.pkl'
 }
 
 # Anomaly models have no predict_proba, so they are scored with evaluate_anomaly_model.
@@ -220,8 +220,8 @@ def main():
     print_what_worked(results, df)
     print_verdict(df, ranks, int(y_test.sum()))
 
-    os.makedirs('data/processed', exist_ok=True)
-    pd.DataFrame(results).T.to_csv('data/processed/model_comparison.csv')
+    os.makedirs(Root / 'data' / 'processed', exist_ok=True)
+    pd.DataFrame(results).T.to_csv(Root / 'data' / 'processed' / 'model_comparison.csv')
 
 
 if __name__ == '__main__':
