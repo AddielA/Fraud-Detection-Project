@@ -1,4 +1,4 @@
-# Credit Card Fraud Detection #
+# Credit Card Fraud Detection - Version 1.0.0 #
 
 ## Overview ##
 
