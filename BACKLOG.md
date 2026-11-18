@@ -8,7 +8,7 @@ Completed tickets are marked ✅ and keep a short note of what was done.
 | FD-1 | ✅ ~~Pin package versions~~ | Required | 15 min | |
 | FD-2 | ✅ ~~Make scripts runnable from any folder~~ | Required | 30 min | |
 | FD-3 | ✅ ~~Write the README~~ | Required | 1–2 hrs | FD-1, FD-2 |
-| FD-4 | Move repeated results printout into `evaluate.py` | Optional | 30 min | |
+| FD-4 | ✅ ~~Move repeated results printout into `evaluate.py`~~ | Optional | 30 min | |
 | FD-5 | Tune decision thresholds on the validation set | Optional | 1–2 hrs | |
 | FD-6 | Business-cost analysis | Optional | 2–3 hrs | FD-5 |
 | FD-7 | Cross-validation for the top models | Optional | 1–2 hrs | |
@@ -45,16 +45,9 @@ Every package in `requirements.txt` is pinned to the version installed in the pr
 
 Improvements to the analysis itself.
 
-### FD-4: Move repeated results printout into `evaluate.py`
+### FD-4: Move repeated results printout into `evaluate.py` ✅ Complete (2026-11-18)
 
-The "Frauds caught / missed / False alarms" block and classification report are copied into eight training scripts.
-
-Steps:
-1. Add `print_report(model, X_test, y_test)` to `evaluate.py` that prints the metrics, confusion-matrix counts and classification report.
-2. Replace the copied block in each training script with one call.
-3. Rerun each script and confirm the output is unchanged.
-
-Done when: the printout exists in one place.
+`evaluate.py` has `print_report(model, X_test, y_test)`, and the eight supervised training scripts call it instead of repeating the block. Output is unchanged, except that the two Random Forest scripts no longer print an extra divider line under "Results:".
 
 ### FD-5: Tune decision thresholds on the validation set
 

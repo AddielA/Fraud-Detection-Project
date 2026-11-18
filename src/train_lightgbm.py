@@ -1,11 +1,10 @@
 import joblib
 import pandas as pd
 from lightgbm import LGBMClassifier, early_stopping
-from sklearn.metrics import classification_report, confusion_matrix
 
 from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale, split_train_val, get_class_weights
-from evaluate import evaluate_model
+from evaluate import print_report
 
 
 def main():
@@ -59,19 +58,7 @@ def main():
     print("=" * 50)
 
     # 3. Evaluate
-    metrics = evaluate_model(lgbm, X_test, y_test)
-    print("\n Results:")
-    for name, value in metrics.items():
-        print(f" {name}: {value:.4f}")
-
-    y_pred = lgbm.predict(X_test)
-    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-    print(f"\n Frauds caught: {tp}")
-    print(f" Frauds missed: {fn}")
-    print(f" False alarms: {fp}")
-    print(f" Normal transactions correctly passed: {tn}")
-    print("\n Classification Report:")
-    print(classification_report(y_test, y_pred))
+    print_report(lgbm, X_test, y_test)
 
     # 4. Save
     joblib.dump(lgbm, Root / 'models' / 'lightgbm.pkl')

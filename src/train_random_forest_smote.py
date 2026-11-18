@@ -1,12 +1,11 @@
 import joblib
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, confusion_matrix
 from imblearn.over_sampling import SMOTE
 
 from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
-from evaluate import evaluate_model
+from evaluate import print_report
 
 def main():
 
@@ -36,23 +35,8 @@ def main():
     print("=" * 50)
     print("\n")
 
-    # Predictions
-    y_pred_rf = rf.predict(X_test)
-
     # Metrics
-    print("\n Results:")
-    print("=" * 50)
-    metrics = evaluate_model(rf, X_test, y_test)
-    for name, value in metrics.items():
-        print(f" {name}: {value:.4f}")
-
-    tn, fp, fn, tp = confusion_matrix(y_test, y_pred_rf).ravel()
-    print(f"\n Frauds caught: {tp}")
-    print(f" Frauds missed: {fn}")
-    print(f" False alarms: {fp}")
-    print(f" Normal transactions correctly passed: {tn}")
-    print("\n Classification Report:")
-    print(classification_report(y_test, y_pred_rf))
+    print_report(rf, X_test, y_test)
     
     
     joblib.dump(rf, Root / 'models' / 'random_forest_smote.pkl')

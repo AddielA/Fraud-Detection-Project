@@ -1,12 +1,11 @@
 import joblib
 import pandas as pd
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report, confusion_matrix
 from imblearn.over_sampling import SMOTE
 
 from data_loader import load_data, Root
 from preprocess import engineer_features, split_and_scale
-from evaluate import evaluate_model
+from evaluate import print_report
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -34,19 +33,7 @@ def main():
     nn.fit(X_train_res, y_train_res)
 
     # 3. Evaluate
-    metrics = evaluate_model(nn, X_test, y_test)
-    print("\n Results:")
-    for name, value in metrics.items():
-        print(f" {name}: {value:.4f}")
-
-    y_pred = nn.predict(X_test)
-    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
-    print(f"\n Frauds caught: {tp}")
-    print(f" Frauds missed: {fn}")
-    print(f" False alarms: {fp}")
-    print(f" Normal transactions correctly passed: {tn}")
-    print("\n Classification Report:")
-    print(classification_report(y_test, y_pred))
+    print_report(nn, X_test, y_test)
 
     # 4. Save
     joblib.dump(nn, Root / 'models' / 'neural_network_smote.pkl')
